@@ -1,0 +1,59 @@
+services:
+  bus_db:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bus-enterprise-db:${IMAGE_TAG:-latest}
+    container_name: bus_enterprise_db
+    environment:
+      POSTGRES_DB: bus_enterprise
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - bus_db_data:/var/lib/postgresql
+      - ./init-sql:/docker-entrypoint-initdb.d:ro
+      - ./ssl/server.crt:/etc/ssl/postgres/server.crt:ro
+      - ./ssl/server.key:/etc/ssl/postgres/server.key:ro
+      - ./backups:/backups
+    networks:
+      - db_net
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bus_enterprise"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+
+volumes:
+  bus_db_data:
+    driver: local
+
+networks:
+  db_net:
+    name: bus_enterprise_net
+    driver: bridge
+    # Go backend repo connect 
+    # docker network connect bus_enterprise_net <backend_container>
+    # or backend compose file:
+    # networks:
+    #   bus_enterprise_net:
+    #     external: true

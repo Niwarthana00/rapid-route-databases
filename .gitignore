@@ -1,0 +1,30 @@
+# Secrets (plain text passwords)
+secrets/
+*.txt
+*.key
+*.pem
+
+# SSL certs
+ssl/
+
+# Backup files
+backups/
+*.sql.gz
+*.dump
+
+# Local dev override (auto-generated, not for production)
+# docker-compose.override.yml is tracked (intentionally) since it only
+# contains dev-safe defaults — remove this line if you want to ignore it too
+# docker-compose.override.yml
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.env
+.env.*
+*.env
+.venv
+
+sri_lanka_bus_routes.json
+sri-lanka-260628.osm.pbf
+osm_to_postgis.ipynb

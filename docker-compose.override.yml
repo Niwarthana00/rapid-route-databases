@@ -1,0 +1,10 @@
+services:
+  bus_db:
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_PASSWORD_FILE: ""
+      POSTGRES_PASSWORD: "dev_password_only"
+    secrets: []
+    deploy:
+      resources: {}
