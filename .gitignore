@@ -28,3 +28,7 @@ Thumbs.db
 sri_lanka_bus_routes.json
 sri-lanka-260628.osm.pbf
 osm_to_postgis.ipynb
+
+# Large CSV datasets
+csv_data/
+*.csv
