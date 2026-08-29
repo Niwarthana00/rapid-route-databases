@@ -8,3 +8,16 @@ services:
     secrets: []
     deploy:
       resources: {}
+    # Passed as postgres server flags on every container start, regardless of
+    # whether bus_db_data already has data -- unlike editing the Dockerfile's
+    # postgresql.conf.sample (which only applies to a brand-new/empty volume
+    # at initdb time), this actually fixes the CURRENT volume too.
+    # Needed for Debezium's logical replication (kafka-debezium-stack project).
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "max_replication_slots=4"
+      - "-c"
+      - "max_wal_senders=4"

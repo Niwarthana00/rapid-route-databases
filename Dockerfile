@@ -39,3 +39,12 @@ RUN echo "shared_preload_libraries = 'pg_partman_bgw'" >> /usr/share/postgresql/
     && echo "pg_partman_bgw.interval = 3600" >> /usr/share/postgresql/postgresql.conf.sample \
     && echo "pg_partman_bgw.role = 'postgres'" >> /usr/share/postgresql/postgresql.conf.sample \
     && echo "pg_partman_bgw.dbname = 'bus_enterprise'" >> /usr/share/postgresql/postgresql.conf.sample
+
+# Required for Debezium's CDC pipeline (kafka-debezium-stack project) to do
+# logical replication. Only takes effect on a brand-new/empty volume at
+# initdb time -- the already-running bus_db_data volume needs the `command:`
+# override in docker-compose.override.yml instead (which also covers this
+# same setting so it works either way, fresh volume or existing one).
+RUN echo "wal_level = logical" >> /usr/share/postgresql/postgresql.conf.sample \
+    && echo "max_replication_slots = 4" >> /usr/share/postgresql/postgresql.conf.sample \
+    && echo "max_wal_senders = 4" >> /usr/share/postgresql/postgresql.conf.sample
